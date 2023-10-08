@@ -4,26 +4,49 @@
 
 ## Задание 1
 
-По аналогии с практикой из лекции создайте свой docker image с http сервером nginx. Замените страницу приветсвия Nginx на своё (измените текст приветствия на той же странице).
+### Каталог `my_nginx`
 
-<details>
-<summary>Подсказки:</summary>
-В официальном образе nginx стандартный путь к статичным файлам `/usr/share/nginx/html`.  
-</details>
+Сборка docker image
+```bash
+docker image build . --tag=my_nginx
+```
+Создание docker container
+```bash
+docker container create -p 5000:80 --name=my_nginx_container my_nginx
+```
 
-На проверку присылается GitHub-репозиторий с Dockerfile и статичными файлами для него.
+Запуск docker container
+```bash
+docker container start my_nginx_container
+```
 
-> Для пользовательского html можно использовать пример в [каталоге](html/) с ДЗ.
+Быстрый запуск docker container
+```bash
+docker run -d -p 5000:80 my_nginx
+```
 
 ## Задание 2
 
-Создайте контейнер для REST API сервера любого вашего проекта из курса по Django (например, [CRUD: Склады и запасы](https://github.com/netology-code/dj-homeworks/tree/drf/3.2-crud/stocks_products)).
+### Каталог `REST_API_server`
 
-> **ВАЖНО**: поменяйте БД с postgresql на sqlite3. Чтобы ваш контейнер мог работать без зависимости от postgres (с этим мы разберемся на следующем занятии).
+Сборка docker image
+```bash
+docker image build . --tag=rest_api_server
+```
+Создание docker container
+```bash
+docker container create -p 8000:8000 --name=rest_api_server_container rest_api_server
+```
 
-Проверьте конфигурацию Django на использование переменных окружения (environment).
+Запуск docker container
+```bash
+docker container start rest_api_server_container
+```
 
-- Приложите в репозиторий Dockerfile и файлы приложения.
-- В README.md описать типовые команды для запуска контейнера c backend-сервером.
+Быстрый запуск docker container
+```bash
+docker run -d -p 8000:8000 rest_api_server
+```
 
-> Для проверки работоспособности вашего контейнера отправляйте запросы с помощью `VS Code REST Client` или `Postman`.
+примеры API-запросов в файле
+[rest_api_server_requests_examples.http](rest_api_server_requests_examples.http)
