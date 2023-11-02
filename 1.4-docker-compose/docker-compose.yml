@@ -1,0 +1,54 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+  static_volume:
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      # - .:/docker-entrypoint-initdb.d
+      - ./logs:/var/log
+    environment:
+      - POSTGRES_DB=netology_stocks_products
+      - POSTGRES_USER=postgres_user
+      - POSTGRES_PASSWORD=postgres_pwd
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d netology_stocks_products"]
+      start_period: 15s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  web:
+    build: ./REST_API_server
+    command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/usr/src/static/
+      - ./REST_API_server/stocks_products/:/usr/src/
+      - ./logs:/var/log
+    expose:
+      - 8000
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=netology_stocks_products
+      - DB_USER=postgres_user
+      - DB_PASSWORD=postgres_pwd
+    depends_on:
+      - db
+    restart: unless-stopped
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    ports:
+      - 1337:80
+    depends_on:
+      - web
