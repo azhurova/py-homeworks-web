@@ -1,0 +1,79 @@
+# примеры API-запросов
+
+@userUrl = http://127.0.0.1:5000/user/
+@stickerUrl = http://127.0.0.1:5000/sticker/
+# user1:user1
+@basicToken1 = dXNlcjE6dXNlcjE=
+# user2:user2
+@basicToken2 = dXNlcjI6dXNlcjI=
+
+###
+
+# создание user
+POST {{userUrl}}
+Content-Type: application/json
+Authorization: Basic {{basicToken1}}
+
+{
+  "name": "user2",
+  "password": "user2"
+}
+###
+
+# получение user
+GET {{userUrl}}/23
+Content-Type: application/json
+###
+
+# удаление user
+DELETE {{userUrl}}/23
+Content-Type: application/json
+Authorization: Basic {{basicToken2}}
+###
+
+# обновление user
+PATCH {{userUrl}}/23/
+Content-Type: application/json
+Authorization: Basic {{basicToken1}}
+
+{
+  "name": "user23",
+  "password": "user23"
+}
+###
+
+#=================================================================================================
+
+# создание sticker
+POST {{stickerUrl}}
+Content-Type: application/json
+Authorization: Basic {{basicToken1}}
+
+{
+  "title": "title101",
+  "description": "description101"
+}
+###
+
+# получение sticker
+GET {{stickerUrl}}/7
+Content-Type: application/json
+###
+
+# удаление sticker
+DELETE {{stickerUrl}}/7/
+Content-Type: application/json
+Authorization: Basic {{basicToken1}}
+###
+
+# обновление sticker
+PATCH {{stickerUrl}}/7/
+Content-Type: application/json
+Authorization: Basic {{basicToken2}}
+
+{
+  "title": "title177",
+  "description": "description177",
+  "owner_id": 23
+}
+###

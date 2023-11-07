@@ -1,0 +1,8 @@
+flask
+requests
+psycopg2-binary
+sqlalchemy
+pydantic
+python-dotenv
+Flask-Bcrypt
+Flask-HTTPAuth
