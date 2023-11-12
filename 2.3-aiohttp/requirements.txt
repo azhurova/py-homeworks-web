@@ -1,0 +1,9 @@
+aiohttp
+aiohttp[speedups]
+aiohttp_basicauth
+sqlalchemy
+asyncpg
+python-dotenv
+passlib
+pydantic
+bcrypt
