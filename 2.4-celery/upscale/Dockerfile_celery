@@ -1,0 +1,20 @@
+FROM python:3.11.4
+RUN apt update && apt install -y build-essential gcc clang clang-tools cmake python3-dev cppcheck  \
+    valgrind afl gcc-multilib
+
+RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
+
+WORKDIR /usr/src/
+
+COPY ./upscale/requirements.txt ./requirements.txt
+RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
+
+COPY ./upscale/run_celery.sh ./run_celery.sh
+RUN sed -i 's/\r$//g' run_celery.sh
+RUN chmod +x run_celery.sh
+
+COPY ./upscale/EDSR_x2.pb ./EDSR_x2.pb
+COPY ./upscale/celery_app.py ./celery_app.py
+COPY ./upscale/upscale.py ./upscale.py
+
+CMD bash run_celery.sh

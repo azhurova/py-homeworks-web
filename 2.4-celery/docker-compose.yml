@@ -1,0 +1,86 @@
+version: '3.9'
+
+networks:
+  dev_network:
+
+services:
+  postgre:
+    image: postgres:14.3-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: app
+    container_name: postgre
+    networks:
+      dev_network:
+        aliases:
+          - db-postgre
+
+  redis:
+    image: redis:7.0.0-alpine
+    ports:
+      - "6379:6379"
+    container_name: redis
+    depends_on:
+      - postgre
+    networks:
+      dev_network:
+        aliases:
+          - db-redis
+
+  mongo:
+    image: mongo:4.4.14
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+    container_name: mongo
+    depends_on:
+      - redis
+    networks:
+      dev_network:
+        aliases:
+          - db-mongo
+
+  app:
+    build:
+      context: .
+      dockerfile: ./upscale/Dockerfile_app
+    environment:
+      PG_DSN: 'postgresql://postgres_user:postgres_password@db-postgre:5432/app'
+      MONGO_DSN: "mongodb://mongo_user:mongo_password@db-mongo:27017/files?authSource=admin"
+      CELERY_BROKER: "redis://db-redis:6379/4"
+
+    ports:
+      - "5000:5000"
+    container_name: app
+    depends_on:
+      - mongo
+    networks:
+      dev_network:
+        aliases:
+          - flask
+    volumes:
+      - ./upscale:/usr/src/
+      - ./logs:/var/log
+
+  celery:
+    build:
+      context: .
+      dockerfile: ./upscale/Dockerfile_celery
+    environment:
+      PG_DSN: 'postgresql+psycopg2://postgres_user:postgres_password@db-postgre:5432/app'
+      MONGO_DSN: "mongodb://mongo_user:mongo_password@db-mongo:27017/files?authSource=admin"
+      CELERY_BROKER: "redis://db-redis:6379/4"
+    container_name: celery
+    depends_on:
+      - mongo
+    networks:
+      dev_network:
+    volumes:
+      - ./upscale:/usr/src/
+      - ./logs:/var/log

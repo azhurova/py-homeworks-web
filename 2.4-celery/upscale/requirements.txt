@@ -1,2 +1,15 @@
-opencv-contrib-python==4.6.0.66
-opencv-python==4.6.0.66
+opencv-contrib-python
+opencv-python
+redis
+pymongo
+psycopg2-binary
+cachetools
+celery
+nanoid
+SQLAlchemy
+singleton-decorator
+python-dotenv
+Flask
+Flask-PyMongo
+gunicorn
+requests
